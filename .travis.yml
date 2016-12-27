@@ -1,12 +1,18 @@
 language: node_js
 node_js: stable
+branches:
+  only:
+  - markdown
 before_install:
 - openssl aes-256-cbc -K $encrypted_fd2b5160c5c3_key -iv $encrypted_fd2b5160c5c3_iv
   -in id_rsa.enc -out id_rsa -d
-- echo $encrypted_fd2b5160c5c3_key
-- echo $encrypted_fd2b5160c5c3_iv
+- chmod 600 ~/.ssh/id_rsa
+- eval $(ssh-agent)
+- ssh-add ~/.ssh/id_rsa
+- cp ssh_config ~/.ssh/config
 - git config --global user.name "fate0"
 - git config --global user.email "fate0@fatezero.org"
+- git clone -b gh-pages git@github.com:fate0/blog.fatezero.org.git .deploy_git
 install:
 - npm install hexo-cli -g
 - npm install
@@ -14,6 +20,4 @@ script:
 - hexo clean
 - hexo g
 - hexo d
-branches:
-  only:
-  - markdown
+
