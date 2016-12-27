@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>fate0</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://blog.fatezero.org/"/>
+  <updated>2016-12-27T10:28:10.000Z</updated>
+  <id>http://blog.fatezero.org/</id>
+  
+  <author>
+    <name>fate0</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Komm, süsser Tod</title>
+    <link href="http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/"/>
+    <id>http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/</id>
+    <published>2016-12-21T14:53:27.000Z</published>
+    <updated>2016-12-27T10:28:10.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="这里-H1"><a href="#这里-H1" class="headerlink" title="这里 H1"></a>这里 H1</h1><h2 id="这里-h2"><a href="#这里-h2" class="headerlink" title="这里 h2"></a>这里 h2</h2>
+
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left">test</th>
+<th style="text-align:left">test1</th>
+<th style="text-align:left">test2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">test1</td>
+<td style="text-align:left">test2</td>
+<td style="text-align:left">test3</td>
+</tr>
+</tbody>
+</table>
+<img src="http://octodex.github.com/images/minion.png" width="200" height="200">
+<div class="tip"><br>    预处理器很强大，但它只是编写 CSS 的辅助工具。出于对扩展和维护等方面的考虑，在大型项目中有必要使用预处理器构建 CSS；但是对于小型项目，原生的 CSS 可能是一种更好的选择。不要肆意使用预处理器！<br></div>
+
+
+<p>this is <code>code</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line">print(<span class="string">"hello world"</span>)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>this is block quote</p>
+<blockquote>
+<p>this is second </p>
+</blockquote>
+</blockquote>
+<p>this is list</p>
+<ul>
+<li>test1</li>
+<li>test2</li>
+<li>test3</li>
+</ul>
+<iframe src="//music.163.com/outchain/player?type=2&id=31365696&auto=1&height=66" width="440" height="86" frameborder="0" allowfullscreen></iframe>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;这里-H1&quot;&gt;&lt;a href=&quot;#这里-H1&quot; class=&quot;headerlink&quot; title=&quot;这里 H1&quot;&gt;&lt;/a&gt;这里 H1&lt;/h1&gt;&lt;h2 id=&quot;这里-h2&quot;&gt;&lt;a href=&quot;#这里-h2&quot; class=&quot;headerlink&quot; title=&quot;这里 
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>
