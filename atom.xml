@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.fatezero.org/"/>
-  <updated>2016-12-28T03:43:58.186Z</updated>
+  <updated>2016-12-28T03:47:17.507Z</updated>
   <id>http://blog.fatezero.org/</id>
   
   <author>
@@ -16,13 +16,33 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>test_travis_ci</title>
+    <link href="http://blog.fatezero.org/2016/12/28/test-travis-ci/"/>
+    <id>http://blog.fatezero.org/2016/12/28/test-travis-ci/</id>
+    <published>2016-12-28T11:46:03.000Z</published>
+    <updated>2016-12-28T03:47:17.507Z</updated>
+    
+    <content type="html"><![CDATA[<p>这里是用 Travis CI 生成的</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;这里是用 Travis CI 生成的&lt;/p&gt;
+
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Komm, süsser Tod</title>
     <link href="http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/"/>
     <id>http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/</id>
     <published>2016-12-21T22:53:27.000Z</published>
-    <updated>2016-12-28T03:43:58.186Z</updated>
+    <updated>2016-12-28T03:47:17.507Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="这里-H1"><a href="#这里-H1" class="headerlink" title="这里 H1"></a>这里 H1</h1><h2 id="这里-h2"><a href="#这里-h2" class="headerlink" title="这里 h2"></a>这里 h2</h2>
+    <content type="html"><![CDATA[<h1 id="这里-H1"><a href="#这里-H1" class="headerlink" title="这里 H1"></a>这里 H1</h1><h2 id="这里-h2"><a href="#这里-h2" class="headerlink" title="这里 h2"></a>这里 h2</h2><h2 id="测试-Travis-CI"><a href="#测试-Travis-CI" class="headerlink" title="测试 Travis CI"></a>测试 Travis CI</h2>
 
 
 <table>
