@@ -4,28 +4,25 @@ date: 2016-12-21 22:53:27
 mathjax: true
 ---
 
-# 这里 H1
-## 这里 h2
-## 测试 Travis CI
 
-{% raw %}
+这篇文章的意义在于测试这个主题所支持的功能
 
-{% endraw %}
-
-| test | test1| test2|
-|:---- |:---- |:-----|
-| test1| test2| test3|
+<!--more-->
 
 
-{% img http://octodex.github.com/images/minion.png 200 200 %}
+## 测试 MarkDown 功能
 
-<div class="tip">
-    预处理器很强大，但它只是编写 CSS 的辅助工具。出于对扩展和维护等方面的考虑，在大型项目中有必要使用预处理器构建 CSS；但是对于小型项目，原生的 CSS 可能是一种更好的选择。不要肆意使用预处理器！
-</div>
+#### 0x1. 表格
+
+| 靠左表头 | 居中表头 | 靠右表头 | 
+|:---- | :----: |-----:|
+| `content`| 内容 | $a=1$|
+| *内容* | $a^3$ | **内容** |
 
 
-this is `code`
+#### 0x2. 代码
 
+这里是代码块
 
 ``` python
 import sys
@@ -33,14 +30,64 @@ import sys
 print("hello world")
 ```
 
-> this is block quote
->> this is second 
+这里是行内代码 `print("hello world")`
 
-this is list
-     
-* test1
-* test2
-* test3
+#### 0x3. 引用
+
+> 这里是引用
+> 第二行引用
 
 
-{% iframe //music.163.com/outchain/player?type=2&id=31365696&auto=1&height=66 440 86%}
+#### 0x4. 链接
+
+[我的博客](http://blog.fatezero.org)
+[我的wiki](http://wiki.fatezero.org)
+
+
+#### 0x5. 图片
+
+![privateinvestocat](https://octodex.github.com/images/privateinvestocat.jpg)
+
+
+## 测试 mathjax
+
+这里是数学公式块
+
+{% raw %}
+$$
+        \begin{matrix}
+        1 & x & x^2 \\
+        1 & y & y^2 \\
+        1 & z & z^2 \\
+        \end{matrix}
+$$
+{% endraw %}
+
+这个是行内数学公式 $\sqrt[4]{\frac xy}$
+
+
+## 测试 Hexo 功能
+
+#### 0x1 iframe
+
+{% iframe //music.163.com/outchain/player?type=2&id=31365696&auto=0&height=66 500 86%}
+
+#### 0x2 img
+
+{% img https://octodex.github.com/images/privateinvestocat.jpg 200 200 %}
+一般使用 Hexo 内的图片 tag, 因为可以调整图片大小
+
+#### 0x3 raw
+
+```
+{% raw %}
+content
+{% endraw %}
+```
+
+#### 0x4 主题 tip
+<div class="tip">
+    这个是主题带的 tip
+</div>
+
+
