@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.fatezero.org/"/>
-  <updated>2016-12-28T03:47:17.507Z</updated>
+  <updated>2016-12-28T17:07:06.587Z</updated>
   <id>http://blog.fatezero.org/</id>
   
   <author>
@@ -16,75 +16,66 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>test_travis_ci</title>
-    <link href="http://blog.fatezero.org/2016/12/28/test-travis-ci/"/>
-    <id>http://blog.fatezero.org/2016/12/28/test-travis-ci/</id>
-    <published>2016-12-28T11:46:03.000Z</published>
-    <updated>2016-12-28T03:47:17.507Z</updated>
-    
-    <content type="html"><![CDATA[<p>这里是用 Travis CI 生成的</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;这里是用 Travis CI 生成的&lt;/p&gt;
-
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>Komm, süsser Tod</title>
     <link href="http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/"/>
     <id>http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/</id>
     <published>2016-12-21T22:53:27.000Z</published>
-    <updated>2016-12-28T03:47:17.507Z</updated>
+    <updated>2016-12-28T17:07:06.587Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="这里-H1"><a href="#这里-H1" class="headerlink" title="这里 H1"></a>这里 H1</h1><h2 id="这里-h2"><a href="#这里-h2" class="headerlink" title="这里 h2"></a>这里 h2</h2><h2 id="测试-Travis-CI"><a href="#测试-Travis-CI" class="headerlink" title="测试 Travis CI"></a>测试 Travis CI</h2>
-
-
-<table>
+    <content type="html"><![CDATA[<p>这篇文章的意义在于测试这个主题所支持的功能</p>
+<a id="more"></a>
+<h2 id="测试-MarkDown-功能"><a href="#测试-MarkDown-功能" class="headerlink" title="测试 MarkDown 功能"></a>测试 MarkDown 功能</h2><h4 id="0x1-表格"><a href="#0x1-表格" class="headerlink" title="0x1. 表格"></a>0x1. 表格</h4><table>
 <thead>
 <tr>
-<th style="text-align:left">test</th>
-<th style="text-align:left">test1</th>
-<th style="text-align:left">test2</th>
+<th style="text-align:left">靠左表头</th>
+<th style="text-align:center">居中表头</th>
+<th style="text-align:right">靠右表头</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">test1</td>
-<td style="text-align:left">test2</td>
-<td style="text-align:left">test3</td>
+<td style="text-align:left"><code>content</code></td>
+<td style="text-align:center">内容</td>
+<td style="text-align:right">$a=1$</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>内容</em></td>
+<td style="text-align:center">$a^3$</td>
+<td style="text-align:right"><strong>内容</strong></td>
 </tr>
 </tbody>
 </table>
-<img src="http://octodex.github.com/images/minion.png" width="200" height="200">
-<div class="tip"><br>    预处理器很强大，但它只是编写 CSS 的辅助工具。出于对扩展和维护等方面的考虑，在大型项目中有必要使用预处理器构建 CSS；但是对于小型项目，原生的 CSS 可能是一种更好的选择。不要肆意使用预处理器！<br></div>
-
-
-<p>this is <code>code</code></p>
+<h4 id="0x2-代码"><a href="#0x2-代码" class="headerlink" title="0x2. 代码"></a>0x2. 代码</h4><p>这里是代码块</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line">print(<span class="string">"hello world"</span>)</div></pre></td></tr></table></figure>
-<blockquote>
-<p>this is block quote</p>
-<blockquote>
-<p>this is second </p>
+<p>这里是行内代码 <code>print(&quot;hello world&quot;)</code></p>
+<h4 id="0x3-引用"><a href="#0x3-引用" class="headerlink" title="0x3. 引用"></a>0x3. 引用</h4><blockquote>
+<p>这里是引用<br>第二行引用</p>
 </blockquote>
-</blockquote>
-<p>this is list</p>
-<ul>
-<li>test1</li>
-<li>test2</li>
-<li>test3</li>
-</ul>
-<iframe src="//music.163.com/outchain/player?type=2&id=31365696&auto=1&height=66" width="440" height="86" frameborder="0" allowfullscreen></iframe>
+<h4 id="0x4-链接"><a href="#0x4-链接" class="headerlink" title="0x4. 链接"></a>0x4. 链接</h4><p><a href="http://blog.fatezero.org">我的博客</a><br><a href="http://wiki.fatezero.org" target="_blank" rel="external">我的wiki</a></p>
+<h4 id="0x5-图片"><a href="#0x5-图片" class="headerlink" title="0x5. 图片"></a>0x5. 图片</h4><p><img src="https://octodex.github.com/images/privateinvestocat.jpg" alt="privateinvestocat"></p>
+<h2 id="测试-mathjax"><a href="#测试-mathjax" class="headerlink" title="测试 mathjax"></a>测试 mathjax</h2><p>这里是数学公式块</p>
+
+$$
+        \begin{matrix}
+        1 & x & x^2 \\
+        1 & y & y^2 \\
+        1 & z & z^2 \\
+        \end{matrix}
+$$
+
+<p>这个是行内数学公式 $\sqrt[4]{\frac xy}$</p>
+<h2 id="测试-Hexo-功能"><a href="#测试-Hexo-功能" class="headerlink" title="测试 Hexo 功能"></a>测试 Hexo 功能</h2><h4 id="0x1-iframe"><a href="#0x1-iframe" class="headerlink" title="0x1 iframe"></a>0x1 iframe</h4><iframe src="//music.163.com/outchain/player?type=2&id=31365696&auto=0&height=66" width="500" height="86" frameborder="0" allowfullscreen></iframe>
+<h4 id="0x2-img"><a href="#0x2-img" class="headerlink" title="0x2 img"></a>0x2 img</h4><img src="https://octodex.github.com/images/privateinvestocat.jpg" width="200" height="200">
+<p>一般使用 Hexo 内的图片 tag, 因为可以调整图片大小</p>
+<h4 id="0x3-raw"><a href="#0x3-raw" class="headerlink" title="0x3 raw"></a>0x3 raw</h4><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&#123;% raw %&#125;</div><div class="line">content</div><div class="line">&#123;% endraw %&#125;</div></pre></td></tr></table></figure>
+<h4 id="0x4-主题-tip"><a href="#0x4-主题-tip" class="headerlink" title="0x4 主题 tip"></a>0x4 主题 tip</h4><div class="tip"><br>    这个是主题带的 tip<br></div>
+
+
 ]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;这里-H1&quot;&gt;&lt;a href=&quot;#这里-H1&quot; class=&quot;headerlink&quot; title=&quot;这里 H1&quot;&gt;&lt;/a&gt;这里 H1&lt;/h1&gt;&lt;h2 id=&quot;这里-h2&quot;&gt;&lt;a href=&quot;#这里-h2&quot; class=&quot;headerlink&quot; title=&quot;这里 
+      &lt;p&gt;这篇文章的意义在于测试这个主题所支持的功能&lt;/p&gt;
     
     </summary>
     
