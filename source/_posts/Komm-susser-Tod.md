@@ -68,16 +68,16 @@ $$
 
 ## 测试 Hexo 功能
 
-#### 0x1 iframe
+#### 0x1. iframe
 
 {% iframe //music.163.com/outchain/player?type=2&id=31365696&auto=0&height=66 500 86%}
 
-#### 0x2 img
+#### 0x2. img
 
 {% img https://octodex.github.com/images/privateinvestocat.jpg 200 200 %}
 一般使用 Hexo 内的图片 tag, 因为可以调整图片大小
 
-#### 0x3 raw
+#### 0x3. raw
 
 ```
 {% raw %}
@@ -85,7 +85,7 @@ content
 {% endraw %}
 ```
 
-#### 0x4 主题 tip
+#### 0x4. 主题 tip
 <div class="tip">
     这个是主题带的 tip
 </div>
