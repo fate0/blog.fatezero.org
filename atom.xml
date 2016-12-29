@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.fatezero.org/"/>
-  <updated>2016-12-29T04:06:02.019Z</updated>
+  <updated>2016-12-29T04:09:19.764Z</updated>
   <id>http://blog.fatezero.org/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/"/>
     <id>http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/</id>
     <published>2016-12-21T22:53:27.000Z</published>
-    <updated>2016-12-29T04:06:02.019Z</updated>
+    <updated>2016-12-29T04:09:19.764Z</updated>
     
     <content type="html"><![CDATA[<p>这篇文章的意义在于测试这个主题所支持的功能</p>
 <a id="more"></a>
@@ -64,11 +64,11 @@ $$
 $$
 
 <p>这个是行内数学公式 $\sqrt[4]{\frac xy}$</p>
-<h2 id="测试-Hexo-功能"><a href="#测试-Hexo-功能" class="headerlink" title="测试 Hexo 功能"></a>测试 Hexo 功能</h2><h4 id="0x1-iframe"><a href="#0x1-iframe" class="headerlink" title="0x1 iframe"></a>0x1 iframe</h4><iframe src="//music.163.com/outchain/player?type=2&id=31365696&auto=0&height=66" width="500" height="86" frameborder="0" allowfullscreen></iframe>
-<h4 id="0x2-img"><a href="#0x2-img" class="headerlink" title="0x2 img"></a>0x2 img</h4><img src="https://octodex.github.com/images/privateinvestocat.jpg" width="200" height="200">
+<h2 id="测试-Hexo-功能"><a href="#测试-Hexo-功能" class="headerlink" title="测试 Hexo 功能"></a>测试 Hexo 功能</h2><h4 id="0x1-iframe"><a href="#0x1-iframe" class="headerlink" title="0x1. iframe"></a>0x1. iframe</h4><iframe src="//music.163.com/outchain/player?type=2&id=31365696&auto=0&height=66" width="500" height="86" frameborder="0" allowfullscreen></iframe>
+<h4 id="0x2-img"><a href="#0x2-img" class="headerlink" title="0x2. img"></a>0x2. img</h4><img src="https://octodex.github.com/images/privateinvestocat.jpg" width="200" height="200">
 <p>一般使用 Hexo 内的图片 tag, 因为可以调整图片大小</p>
-<h4 id="0x3-raw"><a href="#0x3-raw" class="headerlink" title="0x3 raw"></a>0x3 raw</h4><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&#123;% raw %&#125;</div><div class="line">content</div><div class="line">&#123;% endraw %&#125;</div></pre></td></tr></table></figure>
-<h4 id="0x4-主题-tip"><a href="#0x4-主题-tip" class="headerlink" title="0x4 主题 tip"></a>0x4 主题 tip</h4><div class="tip"><br>    这个是主题带的 tip<br></div>
+<h4 id="0x3-raw"><a href="#0x3-raw" class="headerlink" title="0x3. raw"></a>0x3. raw</h4><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&#123;% raw %&#125;</div><div class="line">content</div><div class="line">&#123;% endraw %&#125;</div></pre></td></tr></table></figure>
+<h4 id="0x4-主题-tip"><a href="#0x4-主题-tip" class="headerlink" title="0x4. 主题 tip"></a>0x4. 主题 tip</h4><div class="tip"><br>    这个是主题带的 tip<br></div>
 
 
 ]]></content>
