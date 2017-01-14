@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.fatezero.org/"/>
-  <updated>2017-01-14T07:49:17.713Z</updated>
+  <updated>2017-01-14T16:36:25.266Z</updated>
   <id>http://blog.fatezero.org/</id>
   
   <author>
@@ -16,24 +16,34 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>阴阳师：一个非酋的逆向旅程</title>
+    <title>阴阳师：一个非酋的逆向旅程(TODO)</title>
     <link href="http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/"/>
     <id>http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/</id>
     <published>2017-01-14T12:15:11.000Z</published>
-    <updated>2017-01-14T07:49:17.713Z</updated>
+    <updated>2017-01-14T16:36:25.266Z</updated>
     
     <content type="html"><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>为了验证这个游戏到底有没有 SSR</p>
 <a id="more"></a>
-<h2 id="0x01-前期工作"><a href="#0x01-前期工作" class="headerlink" title="0x01 前期工作"></a>0x01 前期工作</h2><h4 id="工具准备"><a href="#工具准备" class="headerlink" title="工具准备"></a>工具准备</h4><ul>
-<li>Android 5.0.2</li>
-<li>windows</li>
-<li>ubuntu</li>
-</ul>
+<h2 id="0x01-前期工作"><a href="#0x01-前期工作" class="headerlink" title="0x01 前期工作"></a>0x01 前期工作</h2><p>直接将 <code>onmyoji_netease_1.0.14.apk</code> 解压出来观察各个文件，便可以知道阴阳师是使用 <code>NeoX + Python</code>。
+其中 <code>lib/armeabi-v7a/libclient.so</code> 和 <code>assets/script.npk</code> 这两个文件，
+一个是带着 Python 虚拟机以及加解密相关的 so 文件，一个是加密之后的 Python 文件，
+所以我们后期的工作中心也主要放在这两个文件上。</p>
+<p>为了能够在后面调试阴阳师，我们需要对阴阳师重打包：</p>
+<ol>
+<li><p>使用 <code>apktool</code> 解包</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">apktool d onmyoji_netease_1.0.14.apk</div></pre></td></tr></table></figure>
-<p>将 <code>AndroidManifest.xml</code> 中的 <code>debuggable</code> 修改为 <code>true</code></p>
+</li>
+<li><p>修改 <code>debuggable</code><br>将 <code>AndroidManifest.xml</code> 中的 <code>debuggable</code> 修改为 <code>true</code></p>
+</li>
+<li><p>重打包</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">apktool b onmyoji_netease_1.0.14</div></pre></td></tr></table></figure>
+</li>
+<li><p>签名</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">java -jar signapk.jar platform.x509.pem platform.pk8 onmyoji_netease_1.0.14.apk onmyoji_netease_1.0.14_fix.apk</div></pre></td></tr></table></figure>
-<h2 id="0x02-Android-调试初试"><a href="#0x02-Android-调试初试" class="headerlink" title="0x02 Android 调试初试"></a>0x02 Android 调试初试</h2><ol>
+</li>
+</ol>
+<h2 id="0x02-Android-调试初试"><a href="#0x02-Android-调试初试" class="headerlink" title="0x02 Android 调试初试"></a>0x02 Android 调试初试</h2><p>由于我是第一次进行 Android 调试，所以这里我写得稍微啰嗦一点儿。</p>
+<ol>
 <li><p>关闭SELinux</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">setenforce 0</div></pre></td></tr></table></figure>
 </li>
@@ -55,27 +65,41 @@
 <li><p>将阴阳师的调试端口转发到本地</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">ps | grep netease.onmyoji</div><div class="line">adb forward tcp:17178 jdwp:process_pid</div></pre></td></tr></table></figure>
 </li>
-<li><p>xxx</p>
+<li><p>jdb 附加</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">jdb -connect com.sun.jdi.SocketAttach:hostname=127.0.0.1,port=17178</div></pre></td></tr></table></figure>
 </li>
 </ol>
 <p>由于种种原因，我需要重开很多次阴阳师，所以我就将步骤 7，8 合并成一个 <code>copy &amp; paste</code> 的命令
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">for /f &quot;delims=&quot; %i in (&apos;adb shell &quot;set `ps |grep netease.onmyoji`; echo -n $2&quot;&apos;) do adb forward tcp:17178 jdwp:%i &amp;&amp; jdb -connect com.sun.jdi.SocketAttach:hostname=127.0.0.1,port=17178</div></pre></td></tr></table></figure></p>
-<h2 id="0x03-IDAPython"><a href="#0x03-IDAPython" class="headerlink" title="0x03 IDAPython"></a>0x03 IDAPython</h2><h4 id="1-更加自动化"><a href="#1-更加自动化" class="headerlink" title="1. 更加自动化"></a>1. 更加自动化</h4><p>虽然说能够对阴阳师进行调试了，但是每次重新调试都需要我手动重复暂停继续等待加载 <code>libclient.so</code>，所以我写了这么一个 IDAPython script:</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">from</span> idc <span class="keyword">import</span> *</div><div class="line"><span class="keyword">from</span> idaapi <span class="keyword">import</span> *</div><div class="line"><span class="keyword">from</span> idautils <span class="keyword">import</span> *</div><div class="line"></div><div class="line">bt_cond = <span class="string">"""</span></div><div class="line">filename = GetString(cpu.r0)</div><div class="line">print("loading: %s" % filename)</div><div class="line"></div><div class="line">if not filename:</div><div class="line">    return True</div><div class="line"></div><div class="line">if filename == "libclient.so":</div><div class="line">    return True</div><div class="line">"""</div><div class="line">add_bpt(LocByName(<span class="string">'__dl__ZL17soinfo_link_imageP6soinfoPK17android_dlextinfo'</span>), <span class="number">0</span>, BPT_SOFT)</div><div class="line">enable_bpt(LocByName(<span class="string">'__dl__ZL17soinfo_link_imageP6soinfoPK17android_dlextinfo'</span>), <span class="keyword">True</span>)</div><div class="line">SetBptCnd(LocByName(<span class="string">'__dl__ZL17soinfo_link_imageP6soinfoPK17android_dlextinfo'</span>), bt_cond)</div></pre></td></tr></table></figure>
-<p>但是问题来了，有时候 <code>GetString(cpu.r0)</code> 返回一个 <code>idaapi.BADADDR</code>，所以 IDA 暂停了，
-但是暂停的时候去查看这个地址的内容却发现是正常数据，后面我还是老老实实改成自己手动。</p>
-<h4 id="1-动态调试代码分析存在问题"><a href="#1-动态调试代码分析存在问题" class="headerlink" title="1. 动态调试代码分析存在问题"></a>1. 动态调试代码分析存在问题</h4><p>为了能够在调试的时候能够正常显示函数，我将静态调试的 IDA 中 <code>text</code> 段的函数地址全部导出到 <code>d:\\ida.txt</code> 中</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> json</div><div class="line"></div><div class="line">funclist = []</div><div class="line"><span class="keyword">for</span> seg_ea <span class="keyword">in</span> Segments():</div><div class="line">    <span class="keyword">if</span> SegName(seg_ea) != <span class="string">'.text'</span>:</div><div class="line">        <span class="keyword">continue</span></div><div class="line"></div><div class="line">    <span class="keyword">for</span> function_ea <span class="keyword">in</span> Functions(SegStart(seg_ea), SegEnd(seg_ea)):</div><div class="line">        funclist.append(function_ea)</div><div class="line"></div><div class="line">py_init = LocByName(<span class="string">'Py_Initialize'</span>)</div><div class="line">funclist.insert(<span class="number">0</span>, py_init)</div><div class="line"></div><div class="line">open(<span class="string">'d:\\ida.txt'</span>, <span class="string">'w'</span>).write(json.dumps(funclist))</div><div class="line">print(<span class="string">'done'</span>)</div></pre></td></tr></table></figure>
-<p>然后再将 <code>d:\\ida.txt</code> 的内容再导入到动态调试的 IDA 中</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> json</div><div class="line"></div><div class="line">funclist = json.loads(open(<span class="string">'d:\\ida.txt'</span>).read())</div><div class="line"></div><div class="line">daynamic_py_init = LocByName(<span class="string">'Py_Initialize'</span>)</div><div class="line">static_py_init = funclist.pop(<span class="number">0</span>)</div><div class="line"></div><div class="line">offset = daynamic_py_init - static_py_init</div><div class="line"></div><div class="line"><span class="keyword">for</span> function_ea <span class="keyword">in</span> funclist:</div><div class="line">    MakeFunction(function_ea + offset)</div><div class="line"></div><div class="line">print(<span class="string">'done'</span>)</div></pre></td></tr></table></figure>
-<p>然而因为 <code>text</code> 段有 1w 多个函数，导入的时候 <code>MakeFunction</code> 实在太慢了，大概要等五分钟才好，所以我就放弃了这样的方法。</p>
-<h4 id="2-Call-Stack"><a href="#2-Call-Stack" class="headerlink" title="2. Call Stack"></a>2. Call Stack</h4><p>不知道为什么我的 <code>Call Stack</code> 一直显示任何东西，不确定是手机的问题还是 IDA 的问题，还是这个 App 的问题，
-所以我还是从 fp 直接推出整个 Call Stack</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> idaapi, idautils</div><div class="line"></div><div class="line">static_py_init = <span class="number">0x1285398</span></div><div class="line">dynamic_py_init = LocByName(<span class="string">'Py_Initialize'</span>)</div><div class="line">offset = dynamic_py_init - static_py_init</div><div class="line"></div><div class="line">f_fp = idautils.cpu.fp</div><div class="line">f_pc = <span class="number">0</span></div><div class="line"></div><div class="line">i = <span class="number">0</span></div><div class="line"><span class="keyword">while</span> i &lt; <span class="number">100</span>:</div><div class="line">    i += <span class="number">1</span></div><div class="line">    f_pc = Dword(f_fp)</div><div class="line">    f_fp = Dword(f_fp<span class="number">-4</span>)</div><div class="line"></div><div class="line">    <span class="keyword">if</span> f_fp == idaapi.BADADDR:</div><div class="line">        <span class="keyword">break</span></div><div class="line"></div><div class="line">    print(<span class="string">"%s %s"</span> % (hex(f_pc), hex(f_pc - offset)))</div><div class="line"></div><div class="line">print(<span class="string">'==============================='</span>)</div></pre></td></tr></table></figure>
+<h2 id="0x03-open-amp-read"><a href="#0x03-open-amp-read" class="headerlink" title="0x03 open &amp; read"></a>0x03 open &amp; read</h2><p>之前我也说过了，<code>lib/armeabi-v7a/libclient.so</code> 和 <code>assets/script.npk</code> 这两个是重点文件，在 <code>libclient.so</code> 加载之后，自然要关注一下 <code>script.npk</code>。</p>
+<p>要想解密 <code>script.npk</code>，基本思路还是挺简单的：关注 <code>script.npk</code> 读取的数据经过了怎么样的处理。</p>
+<p>为了更好的将 <code>read</code> 函数中的 fd 与文件名对应，我在 <code>open</code> 处下条件断点，并加上下面的判断：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> idc</div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">not</span> hasattr(idc, <span class="string">"fd_map"</span>):</div><div class="line">    idc.fd_map = &#123;&#125;</div><div class="line"></div><div class="line">filename = GetString(cpu.r0)</div><div class="line"></div><div class="line"><span class="keyword">if</span> filename <span class="keyword">and</span> <span class="string">"script.npk"</span> <span class="keyword">in</span> filename:</div><div class="line">    StepUntilRet()</div><div class="line">    GetDebuggerEvent(WFNE_SUSP, <span class="number">-1</span>)</div><div class="line">    fd = cpu.r0</div><div class="line">    continue_process()</div><div class="line">    <span class="keyword">if</span> fd != idaapi.BADADDR:</div><div class="line">        print(<span class="string">"open: %s fd: %s"</span> % (filename, fd))</div><div class="line">        idc.fd_map[fd] = filename</div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line"><span class="keyword">else</span>:</div><div class="line">    print(<span class="string">"open: %s"</span> % filename)</div><div class="line">    </div><div class="line"><span class="keyword">return</span> <span class="keyword">False</span></div></pre></td></tr></table></figure>
+<p>上面的代码主要是将和 <code>script.npk</code> 相关的 fd 和文件名关联起来，方便于在 <code>read</code> 调用时区分和 <code>script.npk</code> 相关的读取操作。</p>
+<p><code>read</code> 函数条件断点代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> idc</div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">not</span> hasattr(idc, <span class="string">'fd_map'</span>):</div><div class="line">    <span class="keyword">return</span></div><div class="line"></div><div class="line">fd = cpu.r0</div><div class="line"></div><div class="line"><span class="keyword">if</span> fd <span class="keyword">in</span> idc.fd_map:</div><div class="line">    print(<span class="string">"reading: %s"</span> % idc.fd_map[fd])</div><div class="line">    <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">    </div><div class="line"><span class="keyword">return</span> <span class="keyword">False</span></div></pre></td></tr></table></figure>
 <h2 id="0x"><a href="#0x" class="headerlink" title="0x??"></a>0x??</h2><p>TODO</p>
-<h2 id="0x-1"><a href="#0x-1" class="headerlink" title="0x??"></a>0x??</h2><p>为了计算出正确的 <code>opcode</code>，我写了一份使用了所有 <code>Python 2.7 opcode</code> 的文件： <a href="https://gist.github.com/fate0/3e1d23bce9d4d2cfa93848dd92aba3d4" target="_blank" rel="external">pyopcode.py</a></p>
-<h2 id="0x-2"><a href="#0x-2" class="headerlink" title="0x??"></a>0x??</h2><p>看了代码之后，发现抽卡的爆率不在本地，但是百鬼夜行的碎片掉率是在本地计算的，简单看一下相关代码片段：</p>
+<h2 id="0x-迷一般的-opcode"><a href="#0x-迷一般的-opcode" class="headerlink" title="0x?? 迷一般的 opcode"></a>0x?? 迷一般的 opcode</h2><p>为了计算出正确的 <code>opcode</code>，我写了一份使用了所有 <code>Python 2.7 opcode</code> 的文件： <a href="https://gist.github.com/fate0/3e1d23bce9d4d2cfa93848dd92aba3d4" target="_blank" rel="external">pyopcode.py</a></p>
+<p>TODO</p>
+<p>除了上面的方法外，我们还可以使用 <a href="https://www.hex-rays.com/products/ida/support/tutorials/debugging_appcall.pdf" target="_blank" rel="external">IDA Appcall</a>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line">test = Appcall.proto(<span class="string">'PyRun_SimpleString'</span>, <span class="string">'int PyRun_SimpleString(char *);'</span>)</div><div class="line"><span class="comment"># test.options = Appcall.APPCALL_MANUAL</span></div><div class="line"><span class="keyword">print</span> test(<span class="string">"open('/sdcard/test123.txt', 'w+').write(str(sys.path))"</span>)</div></pre></td></tr></table></figure></p>
+<p><code>Appcall</code> 比上面的方法更好的是它处于程序的运行状态，程序运行中的数据，使用 <code>Appcall</code> 都可以接触到。</p>
+<p>但是这招实在没法不吐槽：优点非常好用，缺点时灵时不灵。</p>
+<h2 id="0x-花样使用-IDAPython"><a href="#0x-花样使用-IDAPython" class="headerlink" title="0x?? 花样使用 IDAPython"></a>0x?? 花样使用 IDAPython</h2><h4 id="1-尝试自动化"><a href="#1-尝试自动化" class="headerlink" title="1. 尝试自动化"></a>1. 尝试自动化</h4><p>因为要经常重开阴阳师，但是每次重新调试都需要我手动重复暂停继续等待加载 <code>libclient.so</code>，所以我写了这么一个 IDAPython Script:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">from</span> idc <span class="keyword">import</span> *</div><div class="line"><span class="keyword">from</span> idaapi <span class="keyword">import</span> *</div><div class="line"><span class="keyword">from</span> idautils <span class="keyword">import</span> *</div><div class="line"></div><div class="line">bt_cond = <span class="string">"""</span></div><div class="line">filename = GetString(cpu.r0)</div><div class="line">print("loading: %s" % filename)</div><div class="line"></div><div class="line">if not filename:</div><div class="line">    return True</div><div class="line"></div><div class="line">if filename == "libclient.so":</div><div class="line">    return True</div><div class="line">"""</div><div class="line">add_bpt(LocByName(<span class="string">'__dl__ZL17soinfo_link_imageP6soinfoPK17android_dlextinfo'</span>), <span class="number">0</span>, BPT_SOFT)</div><div class="line">enable_bpt(LocByName(<span class="string">'__dl__ZL17soinfo_link_imageP6soinfoPK17android_dlextinfo'</span>), <span class="keyword">True</span>)</div><div class="line">SetBptCnd(LocByName(<span class="string">'__dl__ZL17soinfo_link_imageP6soinfoPK17android_dlextinfo'</span>), bt_cond)</div></pre></td></tr></table></figure>
+<p>看着是没什么问题，但是有时候 <code>GetString(cpu.r0)</code> 返回一个 <code>idaapi.BADADDR</code>，所以 IDA 暂停了，
+但是暂停的时候去查看这个地址的内容却发现是正常数据，并不是 <code>idaapi.BADADDR</code>。这个谜一般的情况我并没有去解决，后面我还是老老实实手动。</p>
+<h4 id="2-尝试分析函数"><a href="#2-尝试分析函数" class="headerlink" title="2. 尝试分析函数"></a>2. 尝试分析函数</h4><p>当一些断点断下来的时候，在动态调试的窗口只能看到运行指令以及之后的几条指令，虽然说也可以一直按 <code>C</code> 键，
+但是总这样也挺不方便的，所以我将静态调试的 IDA 中<code>text</code> 段的函数地址全部导出到 <code>d:\\ida.txt</code> 中：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> json</div><div class="line"></div><div class="line">funclist = []</div><div class="line"><span class="keyword">for</span> seg_ea <span class="keyword">in</span> Segments():</div><div class="line">    <span class="keyword">if</span> SegName(seg_ea) != <span class="string">'.text'</span>:</div><div class="line">        <span class="keyword">continue</span></div><div class="line"></div><div class="line">    <span class="keyword">for</span> function_ea <span class="keyword">in</span> Functions(SegStart(seg_ea), SegEnd(seg_ea)):</div><div class="line">        funclist.append(function_ea)</div><div class="line"></div><div class="line">py_init = LocByName(<span class="string">'Py_Initialize'</span>)</div><div class="line">funclist.insert(<span class="number">0</span>, py_init)</div><div class="line"></div><div class="line">open(<span class="string">'d:\\ida.txt'</span>, <span class="string">'w'</span>).write(json.dumps(funclist))</div><div class="line">print(<span class="string">'done'</span>)</div></pre></td></tr></table></figure>
+<p>然后再将 <code>d:\\ida.txt</code> 的内容再导入到动态调试的 IDA 中：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> json</div><div class="line"></div><div class="line">funclist = json.loads(open(<span class="string">'d:\\ida.txt'</span>).read())</div><div class="line"></div><div class="line">daynamic_py_init = LocByName(<span class="string">'Py_Initialize'</span>)</div><div class="line">static_py_init = funclist.pop(<span class="number">0</span>)</div><div class="line"></div><div class="line">offset = daynamic_py_init - static_py_init</div><div class="line"></div><div class="line"><span class="keyword">for</span> function_ea <span class="keyword">in</span> funclist:</div><div class="line">    MakeFunction(function_ea + offset)</div><div class="line"></div><div class="line">print(<span class="string">'done'</span>)</div></pre></td></tr></table></figure>
+<p>然而因为 <code>libclient.so</code> 中的 <code>text</code> 段有 1w 多个函数，导入的时候 <code>MakeFunction</code> 实在太慢了，
+大概要等五分钟才好，用了几次之后我就放弃了这样的方法。</p>
+<h4 id="3-显示调用堆栈"><a href="#3-显示调用堆栈" class="headerlink" title="3. 显示调用堆栈"></a>3. 显示调用堆栈</h4><p>不知道为什么我的 <code>Call Stack</code> 一直显示任何东西，不确定是手机的问题还是 IDA 的问题，还是这个 App 的问题，折腾这问题感觉很麻烦。
+因为 fp 寄存器还保存着程序的返回地址，所以还是直接写个 IDAPython Script 打印出调用堆栈比较方便的(如果 fp 不能用，可以参考 <a href="http://www.hexblog.com/?p=104" target="_blank" rel="external">An attempt to reconstruct the call stack</a>)：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">import</span> idaapi, idautils</div><div class="line"></div><div class="line">static_py_init = <span class="number">0x1285398</span></div><div class="line">dynamic_py_init = LocByName(<span class="string">'Py_Initialize'</span>)</div><div class="line">offset = dynamic_py_init - static_py_init</div><div class="line"></div><div class="line">f_fp = idautils.cpu.fp</div><div class="line">f_pc = <span class="number">0</span></div><div class="line"></div><div class="line">i = <span class="number">0</span></div><div class="line"><span class="keyword">while</span> i &lt; <span class="number">100</span>:</div><div class="line">    i += <span class="number">1</span></div><div class="line">    f_pc = Dword(f_fp)</div><div class="line">    f_fp = Dword(f_fp<span class="number">-4</span>)</div><div class="line"></div><div class="line">    <span class="keyword">if</span> f_fp == idaapi.BADADDR:</div><div class="line">        <span class="keyword">break</span></div><div class="line"></div><div class="line">    print(<span class="string">"%s %s"</span> % (hex(f_pc), hex(f_pc - offset)))</div><div class="line"></div><div class="line">print(<span class="string">'==============================='</span>)</div></pre></td></tr></table></figure>
+<h2 id="0x-简单写个挂"><a href="#0x-简单写个挂" class="headerlink" title="0x?? 简单写个挂"></a>0x?? 简单写个挂</h2><p>看了代码之后，发现抽卡的爆率不在本地，但是百鬼夜行的碎片掉率是在本地计算的，简单看一下相关代码片段：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># scenemembers/GhostWalkScene.py</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">GhostWalkScene</span><span class="params">(GameScene)</span>:</span></div><div class="line">    <span class="comment"># 省略 ...</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">CheckFairGhostIsHit</span><span class="params">(self, ghostID, model)</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span>  <span class="comment"># modify by fate0</span></div><div class="line">        modelIndex = self.FairModelIndexDict[model]</div><div class="line">        </div><div class="line">        <span class="comment"># 省略 ...</span></div><div class="line"></div><div class="line">        data = random.randint(<span class="number">1</span>, <span class="number">100</span>)</div><div class="line">        <span class="keyword">if</span> data &lt;= int(hitRate * <span class="number">100</span>):</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">CheckEffectGhostIsHit</span><span class="params">(self, id)</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">True</span>  <span class="comment"># modify by fate0</span></div><div class="line">        rate = float(GhostWalkFairData.data[int(id)][<span class="string">'rate'</span>])</div><div class="line">        </div><div class="line">        <span class="comment"># 省略 ...</span></div><div class="line"></div><div class="line">        <span class="keyword">if</span> randInt &lt;= int(rate * <span class="number">100.0</span>):</div><div class="line">            <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">            </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">FireBean</span><span class="params">(self, offsetX, offsetY)</span>:</span></div><div class="line">        helpers.createModelAsync(<span class="string">'model/douzi/douzi.gim'</span>, self.FireBeanCallback, (<span class="number">0.3</span>,</div><div class="line">         offsetX,</div><div class="line">         offsetY,</div><div class="line">         self.PlayerModel))</div><div class="line">        self.TotalBeanNum = self.TotalBeanNum + <span class="number">1</span>  <span class="comment"># modify by fate0</span></div><div class="line">        </div><div class="line">        <span class="comment"># 省略 ...</span></div></pre></td></tr></table></figure>
 <ul>
 <li><code>CheckFairGhostIsHit</code>: 用来检查走过的式神是否被击中</li>
@@ -87,7 +111,8 @@
 <p>撒一次豆子的成果：</p>
 <img src="/img/decrypt-onmyoji/result1.png">
 <img src="/img/decrypt-onmyoji/result2.png">
-<h2 id="0x-总结"><a href="#0x-总结" class="headerlink" title="0x?? 总结"></a>0x?? 总结</h2><iframe src="//music.163.com/outchain/player?type=2&id=588640&auto=0&height=66" width="500" height="86" frameborder="0" allowfullscreen></iframe>]]></content>
+<h2 id="0x-总结"><a href="#0x-总结" class="headerlink" title="0x?? 总结"></a>0x?? 总结</h2><p>第一次逆 Android 程序，感悟就是手机竟然还会有广告？</p>
+<iframe src="//music.163.com/outchain/player?type=2&id=588640&auto=0&height=66" width="500" height="86" frameborder="0" allowfullscreen></iframe>]]></content>
     
     <summary type="html">
     
@@ -103,7 +128,7 @@
     <link href="http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/"/>
     <id>http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/</id>
     <published>2016-12-21T22:53:27.000Z</published>
-    <updated>2017-01-14T07:49:17.713Z</updated>
+    <updated>2017-01-14T16:36:25.266Z</updated>
     
     <content type="html"><![CDATA[<p>这篇文章的意义在于测试这个主题所支持的功能</p>
 <a id="more"></a>
