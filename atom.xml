@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.fatezero.org/"/>
-  <updated>2017-01-16T04:04:09.538Z</updated>
+  <updated>2017-01-16T04:18:01.257Z</updated>
   <id>http://blog.fatezero.org/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/"/>
     <id>http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/</id>
     <published>2017-01-14T12:15:11.000Z</published>
-    <updated>2017-01-16T04:04:09.538Z</updated>
+    <updated>2017-01-16T04:18:01.257Z</updated>
     
     <content type="html"><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>为了验证这个游戏到底有没有 SSR</p>
 <a id="more"></a>
@@ -57,10 +57,10 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">am start -D -n  com.netease.onmyoji/com.netease.onmyoji.Launcher</div></pre></td></tr></table></figure>
 </li>
 <li><p>IDA 远程 Attach</p>
-<img src="/img/decrypt-onmyoji/ida_remote_attach.png">
+<img src="http://static.fatezero.org/blog/img/decrypt-onmyoji/ida_remote_attach.png">
 </li>
 <li><p>IDA 设置调试选项</p>
-<img src="/img/decrypt-onmyoji/ida_debug_option.png">
+<img src="http://static.fatezero.org/blog/img/decrypt-onmyoji/ida_debug_option.png">
 </li>
 <li><p>将阴阳师的调试端口转发到本地</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">ps | grep netease.onmyoji</div><div class="line">adb forward tcp:17178 jdwp:process_pid</div></pre></td></tr></table></figure>
@@ -129,7 +129,7 @@
     <link href="http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/"/>
     <id>http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/</id>
     <published>2016-12-21T22:53:27.000Z</published>
-    <updated>2017-01-16T04:04:09.538Z</updated>
+    <updated>2017-01-16T04:18:01.257Z</updated>
     
     <content type="html"><![CDATA[<p>这篇文章的意义在于测试这个主题所支持的功能</p>
 <a id="more"></a>
