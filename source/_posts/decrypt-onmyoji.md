@@ -60,10 +60,10 @@ am start -D -n  com.netease.onmyoji/com.netease.onmyoji.Launcher
 ```
 
 5. IDA 远程 Attach
-{% img /img/decrypt-onmyoji/ida_remote_attach.png %}
+{% img http://static.fatezero.org/blog/img/decrypt-onmyoji/ida_remote_attach.png %}
 
 6. IDA 设置调试选项
-{% img /img/decrypt-onmyoji/ida_debug_option.png %}
+{% img http://static.fatezero.org/blog/img/decrypt-onmyoji/ida_debug_option.png %}
 
 7. 将阴阳师的调试端口转发到本地
 ```
