@@ -305,10 +305,10 @@ class GhostWalkScene(GameScene):
 所以让 `CheckFairGhostIsHit` 和 `CheckEffectGhostIsHit` 这两个方法返回 `True` 就可以实现百分百命中，
 将 `self.TotalBeanNum = self.TotalBeanNum - 1` 修改成 `self.TotalBeanNum = self.TotalBeanNum + 1` 就可以实现无限福豆。
 
-撒一次豆子的成果：
+视频演示：
 
-{% img /img/decrypt-onmyoji/result1.png %}
-{% img /img/decrypt-onmyoji/result2.png %}
+<video src='http://static.fatezero.org/blog/video/decrypt-onmyoji/demo.mp4' type='video/mp4' controls='controls'  width='100%' height='100%'>
+</video>
 
 ## 0x?? 总结
 
