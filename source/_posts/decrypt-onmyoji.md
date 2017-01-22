@@ -314,5 +314,11 @@ class GhostWalkScene(GameScene):
 
 第一次逆 Android 程序，感悟就是手机竟然还会有广告？
 
+## 0x?? 更新
+
+找到一个对任意用户或者对任意频道用户拒绝服务的漏洞，奖励:
+
+{% img http://static.fatezero.org/blog/img/decrypt-onmyoji/reward.png %}
+
 
 {% iframe //music.163.com/outchain/player?type=2&id=588640&auto=0&height=66 500 86%}
