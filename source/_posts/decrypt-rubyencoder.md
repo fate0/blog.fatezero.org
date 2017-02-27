@@ -238,7 +238,7 @@ rb_iseq_evax(VALUE iseqval)
 
 {% img http://static.fatezero.org/blog/img/decrypt-rubyencoder/decrypt-result.png %}
 
-感觉效果还是差强人意，代码算是可以能看的，但是想要执行起来还要继续仅需对代码进行修改(因为[node2ruby.c](https://gist.github.com/fate0/a1851bb39efe177bec20dbcd4445f6f3) 还有挺多地方没考虑到的) 
+感觉效果还是差强人意，代码算是可以能看的，但是想要执行起来还要继续对代码进行修改(因为[node2ruby.c](https://gist.github.com/fate0/a1851bb39efe177bec20dbcd4445f6f3) 还有挺多地方没考虑到的) 
 
 
 
