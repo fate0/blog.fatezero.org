@@ -71,7 +71,7 @@ while rgloader simply decodes it back to AST and executes.</p>
 <p><a href="https://gist.github.com/fate0/a1851bb39efe177bec20dbcd4445f6f3" target="_blank" rel="external">node2ruby.c</a></p>
 <p>试试看这个代码反编译的效果，测试文件 <a href="https://github.com/ruby/ruby/blob/ruby_2_2/lib/net/http.rb" target="_blank" rel="external">http.rb</a></p>
 <img src="http://static.fatezero.org/blog/img/decrypt-rubyencoder/decrypt-result.png">
-<p>感觉效果还是差强人意，代码算是可以能看的，但是想要执行起来还要继续仅需对代码进行修改(因为<a href="https://gist.github.com/fate0/a1851bb39efe177bec20dbcd4445f6f3" target="_blank" rel="external">node2ruby.c</a> 还有挺多地方没考虑到的) </p>
+<p>感觉效果还是差强人意，代码算是可以能看的，但是想要执行起来还要继续对代码进行修改(因为<a href="https://gist.github.com/fate0/a1851bb39efe177bec20dbcd4445f6f3" target="_blank" rel="external">node2ruby.c</a> 还有挺多地方没考虑到的) </p>
 <p>总的来说，Ruby 写的代码还是比较友好的，像我这样的新手都能很快上手，嗯，除了有些小错误外，顺手提交了两 PR</p>
 <ul>
 <li><a href="https://github.com/ruby/ruby/pull/1528" target="_blank" rel="external">node.c: fix NODE_OP_ASGN1 operator</a></li>
