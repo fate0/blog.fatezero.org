@@ -1,6 +1,7 @@
 menu:
     Blog: /
     Archive: /archives/
+    About: http://www.fatezero.org
 
 favicon: /favicon.png
 logo: /favicon.png

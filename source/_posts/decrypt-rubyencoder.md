@@ -242,7 +242,7 @@ rb_iseq_evax(VALUE iseqval)
 
 
 
-总的来说，Ruby 写的代码还是比较友好的，像我这样的新手都能很快上手，嗯，除了有些小错误外，顺手提交了两 PR
+总的来说，Ruby 写的代码还是比较友好的，像我这样的新手都能很快上手，嗯，除了有些小错误外，顺手给 Ruby 提交了两 PR：
 
 * [node.c: fix NODE_OP_ASGN1 operator](https://github.com/ruby/ruby/pull/1528)
 * [node.c: fix nd_ainfo->kw_rest_arg](https://github.com/ruby/ruby/pull/1529)
