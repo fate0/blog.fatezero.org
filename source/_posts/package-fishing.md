@@ -473,12 +473,14 @@ if ext == wheel_ext:
 最后还是提一下我是怎么被 PyPI 官方发现的，原因非常简单，
 我之前每个 evil package 都是用同一个 cookiecutter 模版生成，
 而每个模版的 short desc 都是 `just for fun : )`，所以在 [PyPI 首页](https://pypi.python.org/pypi) 刷了一排 `just for fun : )`。
-就是因为这样简单的理由被发现。但是如果，我为每个 evil package 准备不同模版，为每个 evil package 准备文档， 
+就是因为这样简单的理由被发现。
+
+但是如果，我为每个 evil package 准备不同模版，为每个 evil package 准备文档， 
 为每个 evil package 准备不同的 PyPI account 上传，每次上传使用不同 ip，在 PyPI 没有审核机制的情况下，
 是很难将所有的 evil package 一网打尽，只能靠别人 report。
 
 所以防御方案就完全不可能期待 PyPI 会做什么，只能提升自我对信息安全意识，对 PyPI 上不熟悉的项目一律采取不可信的态度，
-意识到随意 `pip install` 就是随意的执行 `exe` 一样危险。
+意识到随意 `pip install` 就和随意的执行 `exe` 一样危险。
 
 想做一件坏事情真不容易，快去看看 [http://evilpackage.fatezero.org/](http://evilpackage.fatezero.org/) 上面有没有你的名字。
 
