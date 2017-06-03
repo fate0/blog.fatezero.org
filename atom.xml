@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.fatezero.org/"/>
-  <updated>2017-06-03T03:28:15.847Z</updated>
+  <updated>2017-06-03T03:51:13.022Z</updated>
   <id>http://blog.fatezero.org/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://blog.fatezero.org/2017/06/01/package-fishing/"/>
     <id>http://blog.fatezero.org/2017/06/01/package-fishing/</id>
     <published>2017-06-01T20:47:24.000Z</published>
-    <updated>2017-06-03T03:28:15.847Z</updated>
+    <updated>2017-06-03T03:51:13.022Z</updated>
     
     <content type="html"><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>前几天 <code>Samba</code> 公开了一个远程代码执行的漏洞，然后各种 POC 也随之出现，
 <code>exploit-db</code> 上也有这样一个 Python 版本的 <a href="https://www.exploit-db.com/exploits/42060/" target="_blank" rel="external">POC:  Samba 3.5.0 - Remote Code Execution</a>.</p>
@@ -189,11 +189,12 @@
 <h2 id="0x11-总结"><a href="#0x11-总结" class="headerlink" title="0x11 总结"></a>0x11 总结</h2><p>最后还是提一下我是怎么被 PyPI 官方发现的，原因非常简单，
 我之前每个 evil package 都是用同一个 cookiecutter 模版生成，
 而每个模版的 short desc 都是 <code>just for fun : )</code>，所以在 <a href="https://pypi.python.org/pypi" target="_blank" rel="external">PyPI 首页</a> 刷了一排 <code>just for fun : )</code>。
-就是因为这样简单的理由被发现。但是如果，我为每个 evil package 准备不同模版，为每个 evil package 准备文档， 
+就是因为这样简单的理由被发现。</p>
+<p>但是如果，我为每个 evil package 准备不同模版，为每个 evil package 准备文档， 
 为每个 evil package 准备不同的 PyPI account 上传，每次上传使用不同 ip，在 PyPI 没有审核机制的情况下，
 是很难将所有的 evil package 一网打尽，只能靠别人 report。</p>
 <p>所以防御方案就完全不可能期待 PyPI 会做什么，只能提升自我对信息安全意识，对 PyPI 上不熟悉的项目一律采取不可信的态度，
-意识到随意 <code>pip install</code> 就是随意的执行 <code>exe</code> 一样危险。</p>
+意识到随意 <code>pip install</code> 就和随意的执行 <code>exe</code> 一样危险。</p>
 <p>想做一件坏事情真不容易，快去看看 <a href="http://evilpackage.fatezero.org/" target="_blank" rel="external">http://evilpackage.fatezero.org/</a> 上面有没有你的名字。</p>
 <iframe src="//music.163.com/outchain/player?type=2&id=478731355&auto=0&height=66" width="500" height="86" frameborder="0" allowfullscreen></iframe>
 ]]></content>
@@ -213,7 +214,7 @@
     <link href="http://blog.fatezero.org/2017/02/26/decrypt-rubyencoder/"/>
     <id>http://blog.fatezero.org/2017/02/26/decrypt-rubyencoder/</id>
     <published>2017-02-26T18:47:24.000Z</published>
-    <updated>2017-06-03T03:28:15.847Z</updated>
+    <updated>2017-06-03T03:51:13.022Z</updated>
     
     <content type="html"><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>RubyEncoder 是一款对 Ruby 代码进行混淆加密的软件，因为最近我要破解某个使用 RubyEncoder 加密的 Ruby 程序，
 所以工作就转移到如何解密 RubyEncoder 加密的程序。</p>
@@ -314,7 +315,7 @@ while rgloader simply decodes it back to AST and executes.</p>
     <link href="http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/"/>
     <id>http://blog.fatezero.org/2017/01/14/decrypt-onmyoji/</id>
     <published>2017-01-14T12:15:11.000Z</published>
-    <updated>2017-06-03T03:28:15.847Z</updated>
+    <updated>2017-06-03T03:51:13.022Z</updated>
     
     <content type="html"><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>为了验证这个游戏到底有没有 SSR</p>
 <a id="more"></a>
@@ -336,7 +337,7 @@ while rgloader simply decodes it back to AST and executes.</p>
     <link href="http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/"/>
     <id>http://blog.fatezero.org/2016/12/21/Komm-susser-Tod/</id>
     <published>2016-12-21T22:53:27.000Z</published>
-    <updated>2017-06-03T03:28:15.847Z</updated>
+    <updated>2017-06-03T03:51:13.022Z</updated>
     
     <content type="html"><![CDATA[<p>这篇文章的意义在于测试这个主题所支持的功能</p>
 <a id="more"></a>
