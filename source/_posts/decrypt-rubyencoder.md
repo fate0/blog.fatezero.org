@@ -253,5 +253,3 @@ rb_iseq_evax(VALUE iseqval)
 
 对了，还记得我们上面所说的，如果没有 License 文件，就很难将程序跑起来么？
 嗯，我要解密的 Ruby 代码就是必须要 License 文件的，而且我还没有 License。
-
-{% iframe //music.163.com/outchain/player?type=2&id=411754563&auto=0&height=66 500 86%}

@@ -483,5 +483,3 @@ if ext == wheel_ext:
 意识到随意 `pip install` 就和随意的执行 `exe` 一样危险。
 
 想做一件坏事情真不容易，快去看看 [http://evilpackage.fatezero.org/](http://evilpackage.fatezero.org/) 上面有没有你的名字。
-
-{% iframe //music.163.com/outchain/player?type=2&id=478731355&auto=0&height=66 500 86%}
