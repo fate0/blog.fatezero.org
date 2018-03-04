@@ -158,12 +158,11 @@ console.log(window.location);
 
 修改前:
 
-{% img http://localhost:8080/locaiton_error.png 500 %}
+{% img http://static.fatezero.org/blog/img/web-scanner-crawler-01/locaiton_error.png 500  %}
 
 修改后:
 
-{% img http://localhost:8080/location_unforgeable.png 500 %}
-
+{% img http://static.fatezero.org/blog/img/web-scanner-crawler-01/location_unforgeable.png 500  %}
 
 我之所以觉得伪造 location 这个特性很重要，是因为不仅仅在爬虫中需要到这个特性，在实现 DOM XSS 检测的时候这个特性也非常重要，
 虽然说 Headless Chrome 官方文档上有提过将来可能会让用户可以自由 hook location 的特性 (官方文档上也是考虑到 DOM XSS 这块)，
