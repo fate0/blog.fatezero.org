@@ -73,5 +73,5 @@ theme: apollo
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:fate0/blog.fatezero.org.git
+  repo: git@github.com:fatezero-org/blog.fatezero.org.git
   branch: gh-pages
