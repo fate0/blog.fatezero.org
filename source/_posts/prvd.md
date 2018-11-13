@@ -141,7 +141,7 @@ payload 模式相比 taint 模式，优点为：
 
 这里我使用 Python 写了一个比较简单的 fuzzer 放在项目 tools 目录下，目前也只是对每个 source 点增加一个 `'"><xtanzi>./../xtanzi` 这样的 payload
 
-这里也可以根据自己的情况，重新编写 fuzzer
+这里也可以根据自己的情况，重新编写 fuzzer。
 
 #### Sentry 漏洞展示
 
