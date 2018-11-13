@@ -80,7 +80,7 @@ s.parentNode.insertBefore(hm, s);
 这就是我们的 payload 模式，这个模式的 prvd 可以归类为 IAST 的一种。</p>
 <p>payload 模式相比 taint 模式，优点为：</p>
 <ul>
-<li>误报率比 taint 模式低，使用 payload 模式，从技术上完全把误报率降低到 1% 一下</li>
+<li>误报率比 taint 模式低，使用 payload 模式，从技术上完全把误报率降低到 1% 以下</li>
 <li>可以不关注 source 点和 filter 点，这样即使数据经历多次中转，最后经过 sink 点的漏洞，也有能力去检测，比如说多阶 SQL 注入的情况</li>
 </ul>
 <p>缺点为：</p>
@@ -154,7 +154,8 @@ s.parentNode.insertBefore(hm, s);
 由于 Sentry 支持多种语言，所以我们不仅可以给 PHP 写这样一个 Client，还可以给 Python, Ruby 等其他语言写这样检测漏洞的 Client</p>
 <h2 id="0x04-实际例子"><a href="#0x04-实际例子" class="headerlink" title="0x04 实际例子"></a>0x04 实际例子</h2><p>最后，我们拿 <a href="http://updatenew.dedecms.com/base-v57/package/DedeCMS-V5.7-UTF8-SP2.tar.gz" target="_blank" rel="noopener">DedeCMS</a> 作为测试例子，看看 prvd 的效果如何。</p>
 <h4 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h4><p>首先在 <code>dede/config.php</code> 修改 <code>csrf_check</code> 函数让其直接返回 true，其次执行下面命令启动 fuzzer：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python prvd/tootls/fuzzer.py</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python3 prvd/tools/fuzzer.py</span><br></pre></td></tr></table></figure>
+<p>这个 fuzzer 的 DSN 地址为 <code>http://ip:9090/fuzz</code></p>
 <p>然后前往 <a href="https://sentry.io" target="_blank" rel="noopener">Sentry</a> 注册一个账号，或者自建一套 Sentry 服务</p>
 <p>剩下的可以直接使用 docker</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker pull mysql</span><br><span class="line">docker pull fate0/prvd</span><br><span class="line">docker run -d --name dede_mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=<span class="string">''</span> -p 3306:3306 mysql --default-authentication-plugin=mysql_native_password</span><br><span class="line">docker run -d --name dede_prvd -e <span class="string">"PRVD_SENTRY_DSN=&#123;SENTRY_DSN&#125;"</span> -e <span class="string">"PRVD_FUZZER_DSN=&#123;FUZZER_DSN&#125;"</span> -e <span class="string">"PRVD_TAINT_ENABLE=false"</span> -v <span class="string">"/local_path_to_web_root/:/var/www/html"</span> -p 8080:80 --link dede_mysql fate0/prvd</span><br></pre></td></tr></table></figure>
@@ -181,7 +182,7 @@ s.parentNode.insertBefore(hm, s);
 <p>虽然都只是后台的漏洞，但拿来做演示是最好不过了 ：）</p>
 <h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>上面简单的介绍了 prvd 的检测原理和使用过程。简单的说，prvd 就是一个半自动的 PHP 运行时漏洞检测系统，
 在 taint 模式下，会尽可能显示可疑漏洞，方便熟悉安全的人员或者开发人员去 review 代码，
-在 payload 模式下，即使不太了解安全的测试人员也能够检测出漏洞，</p>
+在 payload 模式下，即使不太了解安全的测试人员也能够检测出漏洞。</p>
 <h2 id="0x06-引用"><a href="#0x06-引用" class="headerlink" title="0x06 引用"></a>0x06 引用</h2><ul>
 <li><a href="https://github.com/fate0/prvd" target="_blank" rel="noopener">prvd</a></li>
 <li><a href="https://github.com/laruence/taint" target="_blank" rel="noopener">taint</a></li>
