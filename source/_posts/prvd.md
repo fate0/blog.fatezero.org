@@ -141,6 +141,8 @@ payload 模式相比 taint 模式，优点为：
 
 这里我使用 Python 写了一个比较简单的 fuzzer 放在项目 tools 目录下，目前也只是对每个 source 点增加一个 `'"><xtanzi>./../xtanzi` 这样的 payload
 
+这个 fuzzer 的 DSN 地址为 http://admin:password@ip:9090/fuzz
+
 这里也可以根据自己的情况，重新编写 fuzzer。
 
 #### Sentry 漏洞展示
@@ -182,9 +184,8 @@ Sentry 本来是一个跨平台应用的异常报告系统，但在我们这套 
 首先在 `dede/config.php` 修改 `csrf_check` 函数让其直接返回 true，其次执行下面命令启动 fuzzer：
 
 ```sh
-python3 prvd/tools/fuzzer.py
+python prvd/tools/fuzzer.py
 ```
-这个 fuzzer 的 DSN 地址为 `http://ip:9090/fuzz`
 
 然后前往 [Sentry](https://sentry.io) 注册一个账号，或者自建一套 Sentry 服务
 
