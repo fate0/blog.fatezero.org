@@ -115,7 +115,7 @@ $result = mysqli_query($GLOBALS["___mysqli_ston"], $query) or die( '<pre>' . mys
 
 payload 模式相比 taint 模式，优点为：
 
-* 误报率比 taint 模式低，使用 payload 模式，从技术上完全把误报率降低到 1% 一下
+* 误报率比 taint 模式低，使用 payload 模式，从技术上完全把误报率降低到 1% 以下
 * 可以不关注 source 点和 filter 点，这样即使数据经历多次中转，最后经过 sink 点的漏洞，也有能力去检测，比如说多阶 SQL 注入的情况
 
 缺点为：
@@ -182,8 +182,9 @@ Sentry 本来是一个跨平台应用的异常报告系统，但在我们这套 
 首先在 `dede/config.php` 修改 `csrf_check` 函数让其直接返回 true，其次执行下面命令启动 fuzzer：
 
 ```sh
-python prvd/tootls/fuzzer.py
+python3 prvd/tools/fuzzer.py
 ```
+这个 fuzzer 的 DSN 地址为 `http://ip:9090/fuzz`
 
 然后前往 [Sentry](https://sentry.io) 注册一个账号，或者自建一套 Sentry 服务
 
@@ -228,7 +229,7 @@ docker run -d --name dede_prvd -e "PRVD_SENTRY_DSN={SENTRY_DSN}" -e "PRVD_FUZZER
 
 上面简单的介绍了 prvd 的检测原理和使用过程。简单的说，prvd 就是一个半自动的 PHP 运行时漏洞检测系统，
 在 taint 模式下，会尽可能显示可疑漏洞，方便熟悉安全的人员或者开发人员去 review 代码，
-在 payload 模式下，即使不太了解安全的测试人员也能够检测出漏洞，
+在 payload 模式下，即使不太了解安全的测试人员也能够检测出漏洞。
 
 ## 0x06 引用
 
