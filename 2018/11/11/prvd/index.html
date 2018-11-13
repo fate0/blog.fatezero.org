@@ -126,6 +126,7 @@ s.parentNode.insertBefore(hm, s);
 </table>
 <p>我知道上面的各种检测方式并不完美，每个漏洞的检测方法都有误报和漏报的情况，不过现阶段还是够用的，可以以后继续完善。</p>
 <h4 id="fuzzer"><a href="#fuzzer" class="headerlink" title="fuzzer"></a>fuzzer</h4><p>这里我使用 Python 写了一个比较简单的 fuzzer 放在项目 tools 目录下，目前也只是对每个 source 点增加一个 <code>&#39;&quot;&gt;&lt;xtanzi&gt;./../xtanzi</code> 这样的 payload</p>
+<p>这个 fuzzer 的 DSN 地址为 <a href="http://admin:password@ip:9090/fuzz" target="_blank" rel="noopener">http://admin:password@ip:9090/fuzz</a></p>
 <p>这里也可以根据自己的情况，重新编写 fuzzer。</p>
 <h4 id="Sentry-漏洞展示"><a href="#Sentry-漏洞展示" class="headerlink" title="Sentry 漏洞展示"></a>Sentry 漏洞展示</h4><p>至此，我们还缺少一个漏洞上报的平台，我们希望这个平台能够：</p>
 <ul>
@@ -154,8 +155,7 @@ s.parentNode.insertBefore(hm, s);
 由于 Sentry 支持多种语言，所以我们不仅可以给 PHP 写这样一个 Client，还可以给 Python, Ruby 等其他语言写这样检测漏洞的 Client</p>
 <h2 id="0x04-实际例子"><a href="#0x04-实际例子" class="headerlink" title="0x04 实际例子"></a>0x04 实际例子</h2><p>最后，我们拿 <a href="http://updatenew.dedecms.com/base-v57/package/DedeCMS-V5.7-UTF8-SP2.tar.gz" target="_blank" rel="noopener">DedeCMS</a> 作为测试例子，看看 prvd 的效果如何。</p>
 <h4 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h4><p>首先在 <code>dede/config.php</code> 修改 <code>csrf_check</code> 函数让其直接返回 true，其次执行下面命令启动 fuzzer：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python3 prvd/tools/fuzzer.py</span><br></pre></td></tr></table></figure>
-<p>这个 fuzzer 的 DSN 地址为 <code>http://ip:9090/fuzz</code></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python prvd/tools/fuzzer.py</span><br></pre></td></tr></table></figure>
 <p>然后前往 <a href="https://sentry.io" target="_blank" rel="noopener">Sentry</a> 注册一个账号，或者自建一套 Sentry 服务</p>
 <p>剩下的可以直接使用 docker</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker pull mysql</span><br><span class="line">docker pull fate0/prvd</span><br><span class="line">docker run -d --name dede_mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=<span class="string">''</span> -p 3306:3306 mysql --default-authentication-plugin=mysql_native_password</span><br><span class="line">docker run -d --name dede_prvd -e <span class="string">"PRVD_SENTRY_DSN=&#123;SENTRY_DSN&#125;"</span> -e <span class="string">"PRVD_FUZZER_DSN=&#123;FUZZER_DSN&#125;"</span> -e <span class="string">"PRVD_TAINT_ENABLE=false"</span> -v <span class="string">"/local_path_to_web_root/:/var/www/html"</span> -p 8080:80 --link dede_mysql fate0/prvd</span><br></pre></td></tr></table></figure>
