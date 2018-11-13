@@ -126,7 +126,7 @@ s.parentNode.insertBefore(hm, s);
 </table>
 <p>我知道上面的各种检测方式并不完美，每个漏洞的检测方法都有误报和漏报的情况，不过现阶段还是够用的，可以以后继续完善。</p>
 <h4 id="fuzzer"><a href="#fuzzer" class="headerlink" title="fuzzer"></a>fuzzer</h4><p>这里我使用 Python 写了一个比较简单的 fuzzer 放在项目 tools 目录下，目前也只是对每个 source 点增加一个 <code>&#39;&quot;&gt;&lt;xtanzi&gt;./../xtanzi</code> 这样的 payload</p>
-<p>这里也可以根据自己的情况，重新编写 fuzzer</p>
+<p>这里也可以根据自己的情况，重新编写 fuzzer。</p>
 <h4 id="Sentry-漏洞展示"><a href="#Sentry-漏洞展示" class="headerlink" title="Sentry 漏洞展示"></a>Sentry 漏洞展示</h4><p>至此，我们还缺少一个漏洞上报的平台，我们希望这个平台能够：</p>
 <ul>
 <li>良好的权限管理，拥有的 group、project 等功能</li>
