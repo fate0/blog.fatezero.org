@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> PHP 运行时漏洞检测 · fate0</title><meta name="description" content="PHP 运行时漏洞检测 - fate0"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://blog.fatezero.org/atom.xml" title="fate0"><script>var _hmt = _hmt || [];
+(function() {
+var hm = document.createElement("script");
+hm.src = "https://hm.baidu.com/hm.js?345ca1db7809172aec8db3a78e7679c4";
+var s = document.getElementsByTagName("script")[0]; 
+s.parentNode.insertBefore(hm, s);
+})();</script></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://www.fatezero.org" target="_blank" class="nav-list-link">ABOUT</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">PHP 运行时漏洞检测</h1><div class="post-info">Nov 11, 2018</div><div class="post-content"><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>这片博文将简单的介绍我编写的 PHP 运行时漏洞检测系统 <a href="https://github.com/fate0/prvd" target="_blank" rel="noopener">prvd</a> 的检测逻辑，
+以及该系统在实际测试中的效果。</p>
+<a id="more"></a>
+<h2 id="0x01-基本知识"><a href="#0x01-基本知识" class="headerlink" title="0x01 基本知识"></a>0x01 基本知识</h2><p>在这里我们先介绍几个常用的词语：</p>
+<ol>
+<li><p>source</p>
+<p> 数据来源点，可以是：</p>
+<ul>
+<li>网络，例如常规的 Web 参数等</li>
+<li>文件系统</li>
+<li>数据库</li>
+<li>等等其他用户可控或者间接可控的地方</li>
+</ul>
+</li>
+<li><p>filter</p>
+<p> 数据过滤处理点，可以是：</p>
+<ul>
+<li>编码解码，例如 <code>base64_decode</code> 等</li>
+<li>常规字符串操作，例如 <code>strtolower</code> 等</li>
+<li>安全过滤，例如 <code>mysqli_escape_string</code> 等</li>
+<li>等等其他会更改字符串内容的地方</li>
+</ul>
+</li>
+<li><p>sink</p>
+<p> 漏洞触发点，可以是：</p>
+<ul>
+<li>操作文件相关行为，例如 <code>file_put_content</code> 等</li>
+<li>操作网络相关函数，例如 <code>curl</code> 等</li>
+<li>操作命令相关行为，例如 <code>system</code> 等</li>
+<li>等等其他危险行为</li>
+</ul>
+</li>
+</ol>
+<p>有些地方既可以是 source 点，也可以是 sink 点，比如说 <code>file_put_content</code> 在参数可控的时候是 sink 点，因为返回的数据也是我们可控的，这里返回的数据也是 source 点。</p>
+<h2 id="0x02-xmark"><a href="#0x02-xmark" class="headerlink" title="0x02 xmark"></a>0x02 xmark</h2><p>我们先简单地介绍一下 <a href="https://github.com/fate0/xmark" target="_blank" rel="noopener">xmark</a>，这是一个 PHP7 扩展，能够直接使用 PHP 代码做到：</p>
+<ul>
+<li>对字符串变量进行打标记</li>
+<li>Hook 绝大多数函数/类</li>
+<li>Hook 部分 opcode</li>
+</ul>
+<p>基于 <a href="https://github.com/fate0/xmark" target="_blank" rel="noopener">xmark</a> 所提供的功能，即便是我们不熟悉 PHP 内部实现，我们也能够很简单的去实现：</p>
+<ul>
+<li>PHP RASP</li>
+<li>PHP 解密工具，例如 <a href="http://ddecode.com/phpdecoder/" target="_blank" rel="noopener">phpdecoder</a></li>
+<li>PHP 运行时漏洞检测</li>
+<li>…</li>
+</ul>
+<p>因为 PHP 并不像 Python、Ruby 等其他语言可以很方便的 Hook 函数、类，所以我们开发了这么一个扩展来完成类似的功能。</p>
+<p>实际上 <a href="https://github.com/fate0/xmark" target="_blank" rel="noopener">xmark</a> 这个项目有不少代码是直接拷贝 <a href="https://github.com/laruence/taint" target="_blank" rel="noopener">taint</a> 的，
+那为什么要改这样一个轮子呢？</p>
+<ul>
+<li>taint 的 source 点覆盖不全面，只对 GPC 进行标记</li>
+<li>taint 处理和漏洞相关的逻辑需要在 PHP 扩展中实现</li>
+</ul>
+<p>这里我不打算花太多篇幅介绍 xmark 的实现，直接看代码更方便，更多关于 xmark 的信息可以点<a href="https://github.com/fate0/xmark" target="_blank" rel="noopener">这里</a></p>
+<h2 id="0x03-prvd"><a href="#0x03-prvd" class="headerlink" title="0x03 prvd"></a>0x03 prvd</h2><p>前面说了基于 <a href="https://github.com/fate0/xmark" target="_blank" rel="noopener">xmark</a> 我们可以实现挺多好玩的事情，
+这里我选择去完成一个 PHP 运行时漏洞检测系统，也就是 <a href="https://github.com/fate0/prvd" target="_blank" rel="noopener">prvd</a> 这个项目，
+项目名也就是 PHP Runtime Vulnerability Detection 的缩写。</p>
+<p>prvd 有两种模式，一种是 taint 模式, 另外一种是 payload 模式。taint 模式可以选择开启，payload 模式是一直都开启的。
+这两种模式都依赖外部来解决执行路径的问题。</p>
+<h4 id="taint-模式"><a href="#taint-模式" class="headerlink" title="taint 模式"></a>taint 模式</h4><p>这种模式下 prvd 和 taint 一样，都是 source 打上一个标记，在某些 filter 中传递这个标记，然后在 sink 点检查对应的参数是否被打上标记。</p>
+<p>比方说：
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$cmd = $_POST[<span class="string">'cmd'</span>];</span><br><span class="line">$cmd1 .= <span class="string">"fate0"</span>;</span><br><span class="line">$cmd2 = strtolower($cmd1);</span><br><span class="line">system($cmd2);</span><br></pre></td></tr></table></figure></p>
+<p><code>$_POST[&#39;cmd&#39;]</code> 一开始就被我们打上了标记，在自赋值的时候将标记传递给了 <code>$cmd1</code>，
+在经历 <code>strtolower</code> 这个 filter 的时候继续将标记传递给了 <code>$cmd2</code>，
+<code>$cmd2</code> 最后进入 sink 点 <code>system</code> 函数的时候被检测被打上了标记，从而确定是否可能存在问题。</p>
+<p>taint 模式可以不需要输入特定的 payload 进行攻击就可能发现一些漏洞点，也不会污染数据，但是在 filter 中判断是否应该继续传递标记比较难处理，
+有可能数据已经经过了很好的过滤，但是我们还是继续传递了标记，最终导致误报。也有可能数据处理不当，但我们已经去除了标记，最终导致漏报。</p>
+<p>我们举个漏报的例子：
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$id = $_POST[ <span class="string">'id'</span> ];</span><br><span class="line"></span><br><span class="line">$id = mysqli_real_escape_string($GLOBALS[<span class="string">"___mysqli_ston"</span>], $id);</span><br><span class="line"></span><br><span class="line">$query  = <span class="string">"SELECT first_name, last_name FROM users WHERE user_id = $id;"</span>;</span><br><span class="line"><span class="comment">// $query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";</span></span><br><span class="line">$result = mysqli_query($GLOBALS[<span class="string">"___mysqli_ston"</span>], $query) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">'&lt;pre&gt;'</span> . mysqli_error($GLOBALS[<span class="string">"___mysqli_ston"</span>]) . <span class="string">'&lt;/pre&gt;'</span> );</span><br></pre></td></tr></table></figure></p>
+<p>可控变量 <code>$id</code> 经过 <code>mysqli_real_escape_string</code> 的时候需不需清除其标记呢？</p>
+<p>为了解决这种情况，我编写了另外一种 payload 模式。</p>
+<h4 id="payload-模式"><a href="#payload-模式" class="headerlink" title="payload 模式"></a>payload 模式</h4><p>有时候追踪执行流并没有什么用，整那么多玩意，还不如直接一把梭哈，直接把 payload 打过去，然后在 sink 点观测，
+这就是我们的 payload 模式，这个模式的 prvd 可以归类为 IAST 的一种。</p>
+<p>payload 模式相比 taint 模式，优点为：</p>
+<ul>
+<li>误报率比 taint 模式低，使用 payload 模式，从技术上完全把误报率降低到 1% 以下</li>
+<li>可以不关注 source 点和 filter 点，这样即使数据经历多次中转，最后经过 sink 点的漏洞，也有能力去检测，比如说多阶 SQL 注入的情况</li>
+</ul>
+<p>缺点为：</p>
+<ul>
+<li>漏报率可能会比 taint 模式下高，因为可能经过各种 filter 的时候就被 payload 就会拦截下来，也可能需要特定 payload 才能触发漏洞</li>
+<li>需要特别关注 sink 点，在 sink 点中根据各种条件判断是否为漏洞</li>
+<li>会污染数据</li>
+</ul>
+<p>下面简单的介绍一下在 payload 模式下，各种漏洞的检测方法：</p>
+<table>
+<thead>
+<tr>
+<th>漏洞类型</th>
+<th>检测方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQL 注入</td>
+<td>在 <code>prvd_check_sqli</code> 中检测待 SQL 的完整性是否被破坏，是否逃逸了单双引号</td>
+</tr>
+<tr>
+<td>任意文件操作</td>
+<td>在 <code>prvd_check_path</code> 中检测文件操作的路径中是否包含 <code>../xtanzi</code> 字符串</td>
+</tr>
+<tr>
+<td>远程命令执行</td>
+<td>在 <code>prvd_check_rce</code> 中检测待执行命令的完整性是否破坏，是否逃逸了单双引号</td>
+</tr>
+<tr>
+<td>SSRF</td>
+<td>在 <code>prvd_check_ssrf</code> 中检测输入的链接 domain 是否包含 <code>xtanzi</code> 字符串</td>
+</tr>
+<tr>
+<td>XSS</td>
+<td>在 <code>prvd_check_xss</code> 中判断输入是否被 taint 标记</td>
+</tr>
+<tr>
+<td>调用任意 callback</td>
+<td>在 <code>prvd_check_callback</code> 中检测 callback 是否包含 <code>xtanzi</code> 字符串</td>
+</tr>
+</tbody>
+</table>
+<p>我知道上面的各种检测方式并不完美，每个漏洞的检测方法都有误报和漏报的情况，不过现阶段还是够用的，可以以后继续完善。</p>
+<h4 id="fuzzer"><a href="#fuzzer" class="headerlink" title="fuzzer"></a>fuzzer</h4><p>这里我使用 Python 写了一个比较简单的 fuzzer 放在项目 tools 目录下，目前也只是对每个 source 点增加一个 <code>&#39;&quot;&gt;&lt;xtanzi&gt;./../xtanzi</code> 这样的 payload</p>
+<p>这个 fuzzer 的 DSN 地址为 <a href="http://admin:password@ip:9090/fuzz" target="_blank" rel="noopener">http://admin:password@ip:9090/fuzz</a></p>
+<p>这里也可以根据自己的情况，重新编写 fuzzer。</p>
+<h4 id="Sentry-漏洞展示"><a href="#Sentry-漏洞展示" class="headerlink" title="Sentry 漏洞展示"></a>Sentry 漏洞展示</h4><p>至此，我们还缺少一个漏洞上报的平台，我们希望这个平台能够：</p>
+<ul>
+<li>良好的权限管理，拥有的 group、project 等功能</li>
+<li>收集到漏洞触发时的请求信息</li>
+<li>收集到漏洞触发时的堆栈信息</li>
+<li>能够对多个同堆栈下的重复漏洞进行去重</li>
+<li>能够一键提交 jira 以及 git issue</li>
+<li>各种统计功能</li>
+<li>…</li>
+</ul>
+<p>天啊，需求越来越多，我们的精力更多的被分配到了这个平台上了，请不要忘了我们本意是要做一个 PHP 运行时漏洞检测系统。
+上报平台虽然重要，但不应该成为整套系统花费精力最多的部分，我们需要把时间放在漏洞检测这块。</p>
+<p>这个时候我想起了 <a href="https://github.com/getsentry/sentry" target="_blank" rel="noopener">Sentry</a></p>
+<blockquote>
+<p>Sentry is cross-platform application monitoring, with a focus on error reporting. </p>
+</blockquote>
+<img src="http://static.fatezero.org/blog/img/prvd/sentry.png">
+<p>Sentry 本来是一个跨平台应用的异常报告系统，但在我们这套 PHP 运行时漏洞检测系统中被使用为漏洞上报平台了，理由是：</p>
+<ul>
+<li>支持上面提到的需求</li>
+<li>界面美观</li>
+<li>DRY</li>
+</ul>
+<p>我们的 prvd 可以说是 Sentry 的一个检测漏洞的 Client，只不过 prvd 的功能不是报告异常，而是报告漏洞，
+由于 Sentry 支持多种语言，所以我们不仅可以给 PHP 写这样一个 Client，还可以给 Python, Ruby 等其他语言写这样检测漏洞的 Client</p>
+<h2 id="0x04-实际例子"><a href="#0x04-实际例子" class="headerlink" title="0x04 实际例子"></a>0x04 实际例子</h2><p>最后，我们拿 <a href="http://updatenew.dedecms.com/base-v57/package/DedeCMS-V5.7-UTF8-SP2.tar.gz" target="_blank" rel="noopener">DedeCMS</a> 作为测试例子，看看 prvd 的效果如何。</p>
+<h4 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h4><p>首先在 <code>dede/config.php</code> 修改 <code>csrf_check</code> 函数让其直接返回 true，其次执行下面命令启动 fuzzer：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">python prvd/tools/fuzzer.py</span><br></pre></td></tr></table></figure>
+<p>然后前往 <a href="https://sentry.io" target="_blank" rel="noopener">Sentry</a> 注册一个账号，或者自建一套 Sentry 服务</p>
+<p>剩下的可以直接使用 docker</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">docker pull mysql</span><br><span class="line">docker pull fate0/prvd</span><br><span class="line">docker run -d --name dede_mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD=<span class="string">''</span> -p 3306:3306 mysql --default-authentication-plugin=mysql_native_password</span><br><span class="line">docker run -d --name dede_prvd -e <span class="string">"PRVD_SENTRY_DSN=&#123;SENTRY_DSN&#125;"</span> -e <span class="string">"PRVD_FUZZER_DSN=&#123;FUZZER_DSN&#125;"</span> -e <span class="string">"PRVD_TAINT_ENABLE=false"</span> -v <span class="string">"/local_path_to_web_root/:/var/www/html"</span> -p 8080:80 --link dede_mysql fate0/prvd</span><br></pre></td></tr></table></figure>
+<p>因为 taint 模式误报会比较多(taint 模式出来的漏洞在 Sentry 上会以蓝色标注)，我也并不打算花时间去 review 详情，所以这里我只启用了 payload 模式。</p>
+<h4 id="检测过程"><a href="#检测过程" class="headerlink" title="检测过程"></a>检测过程</h4><p>每个功能点都乱点一下，每个输入框都随便写写，尽量每个功能都能够瞎点瞎填覆盖到。</p>
+<h4 id="DedeCMS-相关漏洞"><a href="#DedeCMS-相关漏洞" class="headerlink" title="DedeCMS 相关漏洞"></a>DedeCMS 相关漏洞</h4><p>最后得出下面这些可疑的漏洞：</p>
+<ul>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_archives_do.php_sqli.html" target="_blank" rel="noopener">dede_archives_do.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_article_add.php_body_sqli.html" target="_blank" rel="noopener">dede_article_add.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_article_keywords_make.php_sqli.html" target="_blank" rel="noopener">dede_article_keywords_make.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_article_test_same.php_sqli.html" target="_blank" rel="noopener">dede_article_test_same.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_pm.php_sqli.html" target="_blank" rel="noopener">dede_pm.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_makehtml_rss_action.php_sqli.html" target="_blank" rel="noopener">dede_makehtml_rss_action.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_co_gather_start_action.php_sqli.html" target="_blank" rel="noopener">dede_co_gather_start_action.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_co_export.php_sqli.html" target="_blank" rel="noopener">dede_co_export.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_co_do.php_sqli.html" target="_blank" rel="noopener">dede_co_do.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_content_batchup_action.php_sqli.html" target="_blank" rel="noopener">dede_content_batchup_action.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_makehtml_all.php_sqli.html" target="_blank" rel="noopener">dede_makehtml_all.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_makehtml_archives_action.php_sqli_1.html" target="_blank" rel="noopener">dede_makehtml_archives_action.php SQL 注入</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_article_add.php_ssrf.html" target="_blank" rel="noopener">dede_article_add.php 服务器端请求伪造</a></li>
+<li><a href="http://static.fatezero.org/blog/other/prvd/dedecms_co_add.php_ssrf.html" target="_blank" rel="noopener">dede_co_add.php 服务器端请求伪造</a></li>
+<li>…</li>
+</ul>
+<p>虽然都只是后台的漏洞，但拿来做演示是最好不过了 ：）</p>
+<h2 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h2><p>上面简单的介绍了 prvd 的检测原理和使用过程。简单的说，prvd 就是一个半自动的 PHP 运行时漏洞检测系统，
+在 taint 模式下，会尽可能显示可疑漏洞，方便熟悉安全的人员或者开发人员去 review 代码，
+在 payload 模式下，即使不太了解安全的测试人员也能够检测出漏洞。</p>
+<h2 id="0x06-引用"><a href="#0x06-引用" class="headerlink" title="0x06 引用"></a>0x06 引用</h2><ul>
+<li><a href="https://github.com/fate0/prvd" target="_blank" rel="noopener">prvd</a></li>
+<li><a href="https://github.com/laruence/taint" target="_blank" rel="noopener">taint</a></li>
+<li><a href="https://github.com/fate0/xmark" target="_blank" rel="noopener">xmark</a></li>
+<li><a href="https://github.com/getsentry/sentry" target="_blank" rel="noopener">Sentry</a></li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2019/07/15/web-scanner-trick/" class="prev">PREV</a><a href="/2018/04/15/web-scanner-crawler-03/" class="next">NEXT</a></div><div class="copyright"><p>© 2016 - 2020 <a href="http://blog.fatezero.org">fate0</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">apollo</a>.</p></div></footer></div></body></html>
